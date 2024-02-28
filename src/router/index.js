@@ -2,6 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
+    path: '/',
+    name: 'main',
+    component: ()=> import('@/views/Main.vue')
+  },
+  {
     path: '/:catchAll(.*)',
     name: 'NotFound',
     title: '404 NotFound',

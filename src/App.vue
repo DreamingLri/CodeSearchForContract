@@ -18,6 +18,4 @@
 
 </style>
 <script setup>
-import Title from "@/components/Title.vue";
-import Main from "@/components/Main.vue";
 </script>
