@@ -17,8 +17,9 @@ const textarea = ref('')
             v-model="textarea"
             :autosize="{ minRows: 2, maxRows: 4 }"
             type="textarea"
-            placeholder="Please input"
+            placeholder="请输入要查询的代码"
         />
+
       </el-main>
     </el-container>
   </div>
