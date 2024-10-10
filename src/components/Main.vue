@@ -61,9 +61,13 @@ function formatToList(text: any) {
 <template>
   <div class="common-layout">
     <el-container style="height: 100vh">
-      <el-header>Header</el-header>
-      <el-container>
-        <el-aside width="400px" style="padding: 0 20px">
+      <el-header style="height: 100px; border-bottom: 1px solid #e1e3e1;">
+        <div style="text-align: center;">
+          <h1>CodeSearchForContract</h1>
+        </div>
+      </el-header>
+      <el-container style="background-color: #fafbfc">
+        <el-aside width="400px" style="padding: 0 20px; border-right: 1px solid #e1e3e1;">
           <div>
             <div>
               <p class="title">Contract Address</p>
