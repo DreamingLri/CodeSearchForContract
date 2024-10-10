@@ -6,7 +6,7 @@ import { ElMessage } from "element-plus";
 
 const search_code = ref('')
 const search_result = ref()
-const selected_code = ref([])
+const selected_code = ref<string[]>([])
 
 function getContract() {
   request.get("https://api.etherscan.io/api?module=contract&action=getsourcecode&address=" + search_code.value + "&apikey=7H5I68STDR37JYFKW9KSHK76NXUG4DZRHW").then(res => {
@@ -26,8 +26,19 @@ interface FileContent {
 interface FileObject {
   [key: string]: FileContent;
 }
+
 const contract_list = ref<{ key: string; value: any }[]>([])
 function formatToList(text: any) {
+  if(text.charAt(0) !== '{'){
+    if(selected_code.value.length !== 0){
+      selected_code.value = []
+    }
+    selected_code.value.push(text)
+    return
+  }
+  if(selected_code.value.length !== 0){
+    selected_code.value = []    
+  }
   let list = text.slice(1, -1)
   let json: FileObject = JSON.parse(list)
   for (const [key, value] of Object.entries(json.sources)) {
@@ -59,7 +70,7 @@ function formatToList(text: any) {
                 </template>
               </el-input>
             </div>
-            <div v-if="search_result?.message === 'OK'">
+            <div v-if="contract_list.length !== 0">
               <p>Choose Contract Files</p>
               <el-scrollbar max-height="400px">
                 <el-card style="border-radius: 10px" shadow="never">
@@ -98,10 +109,7 @@ function formatToList(text: any) {
 .word-break {
   margin-bottom: 20px;
   word-wrap: break-word;
-  /* 确保长单词或长字符串可以在容器宽度内换行 */
   word-break: break-all;
-  /* 如果需要，可以在任何地方打断并换行 */
   white-space: normal;
-  /* 让文本正常换行 */
 }
 </style>
