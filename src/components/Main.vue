@@ -66,7 +66,7 @@ function formatToList(text: any) {
         <el-aside width="400px" style="padding: 0 20px">
           <div>
             <div>
-              <p>Contract Address</p>
+              <p class="title">Contract Address</p>
               <el-input v-model="search_code" style="max-width: 600px" placeholder="0x.." class="input-with-select">
                 <template #append>
                   <el-button :icon="Search" @click="getContract" />
@@ -74,9 +74,9 @@ function formatToList(text: any) {
               </el-input>
             </div>
             <div v-if="contract_list.length !== 0">
-              <p>Choose Contract Files</p>
-              <el-scrollbar max-height="400px">
-                <el-card style="border-radius: 10px" shadow="never">
+              <p class="title">Choose Contract Files</p>
+              <el-card style="border-radius: 10px;" shadow="never">
+                <el-scrollbar max-height="200px">
                   <el-checkbox-group v-model="selected_code">
                     <el-checkbox v-for="item in contract_list" :key="item.value" :label="item.key" :value="item.value">
                       <el-popover placement="top-start" trigger="hover" :content="item.key">
@@ -86,22 +86,31 @@ function formatToList(text: any) {
                       </el-popover>
                     </el-checkbox>
                   </el-checkbox-group>
-                </el-card>
-              </el-scrollbar>
+                </el-scrollbar>
+              </el-card>
+            </div>
+            <div v-if="selected_code.length !== 0">
+              <div style="display:flex;">
+                <p class="title">Contract Code</p>
+                <div style="align-items: center; display: flex; margin-left: 10px;">
+                  <el-icon>
+                    <Search />
+                  </el-icon>
+                </div>
+              </div>
+              <el-card style="height: 300px;">
+                <el-scrollbar max-height="300px">
+                  <div v-if="selected_code">
+                    <div v-for="code in selected_code" :key="code" v-highlight>
+                      <pre style="white-space: pre-wrap;"><code>{{ code }}</code></pre>
+                    </div>
+                  </div>
+                </el-scrollbar>
+              </el-card>
             </div>
           </div>
         </el-aside>
         <el-main style="padding: 0 20px">
-          <p>Contract Code</p>
-            <el-card>
-              <el-scrollbar max-height="500px">
-              <div v-if="selected_code">
-                <div v-for="code in selected_code" :key="code" v-highlight>
-                  <pre style="white-space: pre-wrap;"><code>{{ code }}</code></pre>
-                </div>
-              </div>
-              </el-scrollbar>
-            </el-card>
         </el-main>
       </el-container>
     </el-container>
@@ -114,5 +123,9 @@ function formatToList(text: any) {
   word-wrap: break-word;
   word-break: break-all;
   white-space: normal;
+}
+
+.title {
+  height: 20px;
 }
 </style>
