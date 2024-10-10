@@ -29,15 +29,18 @@ interface FileObject {
 
 const contract_list = ref<{ key: string; value: any }[]>([])
 function formatToList(text: any) {
-  if(text.charAt(0) !== '{'){
-    if(selected_code.value.length !== 0){
+  if (text.charAt(0) !== '{') {
+    if (selected_code.value.length !== 0) {
       selected_code.value = []
     }
     selected_code.value.push(text)
     return
   }
-  if(selected_code.value.length !== 0){
-    selected_code.value = []    
+  if (contract_list.value.length !== 0) {
+    contract_list.value = []
+  }
+  if (selected_code.value.length !== 0) {
+    selected_code.value = []
   }
   let list = text.slice(1, -1)
   let json: FileObject = JSON.parse(list)
