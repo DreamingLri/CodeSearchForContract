@@ -7,6 +7,8 @@ import 'element-plus/dist/index.css'
 import hljs from 'highlight.js' //导入代码高亮文件
 import 'highlight.js/styles/github.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import '../mock/index.js'
+import './style.css'
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
