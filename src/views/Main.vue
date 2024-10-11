@@ -3,10 +3,18 @@ import { nextTick, ref, watch } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import request from "../utils/request";
 import { ElMessage } from "element-plus";
+import post_code from "../utils/code_analysis";
+import format_tag from '../utils/format';
+import { isEmpty } from 'element-plus/es/utils/types.mjs';
 
 const search_code = ref('')
 const search_result = ref()
 const selected_code = ref<string[]>([])
+const code_analysis = ref('')
+const code_tags = ref<string[]>([])
+const code_message = ref<Record<string, string>[]>([])
+const code_message_list = ref<Record<string, string>[]>([])
+
 
 function getContract() {
   request.get("https://api.etherscan.io/api?module=contract&action=getsourcecode&address=" + search_code.value + "&apikey=7H5I68STDR37JYFKW9KSHK76NXUG4DZRHW").then(res => {
@@ -18,6 +26,36 @@ function getContract() {
     }
   })
 }
+
+function autoCopy() {
+  const valueToCopy = selected_code.value.toString();
+  navigator.clipboard.writeText(valueToCopy)
+    .then(() => {
+      ElMessage.success('Copy successfully');
+    })
+    .catch(err => {
+      console.error('Failed to copy: ', err);
+      ElMessage.error('Failed to copy');
+    });
+}
+
+async function send_code() {
+  let res = await post_code(code_analysis.value)
+  code_tags.value = res.tags
+  code_message.value = res.message
+}
+
+function add_message(tag: string) {
+  for (const [_, value] of Object.entries(code_message.value)) {
+    if (!code_message_list.value.includes(value) && Object.keys(value)[0] === tag) {
+      code_message_list.value.push(value)
+    }
+  }
+  // console.log(code_message_list.value);  
+}
+
+
+
 
 interface FileContent {
   content: string;
@@ -54,7 +92,7 @@ function formatToList(text: any) {
       contract_list.value.push(obj);
     }
   }
-  console.log(contract_list.value);
+  // console.log(contract_list.value);
 }
 </script>
 
@@ -62,8 +100,8 @@ function formatToList(text: any) {
   <div class="common-layout">
     <el-container style="height: 100vh">
       <el-header style="height: 100px; border-bottom: 1px solid #e1e3e1;">
-        <div style="text-align: center;">
-          <h1>CodeSearchForContract</h1>
+        <div style="display: flex; justify-content: center; margin-top: 20px;">
+          <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">CodeSearchForContract</h1>
         </div>
       </el-header>
       <el-container style="background-color: #fafbfc">
@@ -97,8 +135,8 @@ function formatToList(text: any) {
               <div style="display:flex;">
                 <p class="title">Contract Code</p>
                 <div style="align-items: center; display: flex; margin-left: 10px;">
-                  <el-icon>
-                    <Search />
+                  <el-icon @click="autoCopy">
+                    <CopyDocument />
                   </el-icon>
                 </div>
               </div>
@@ -115,6 +153,31 @@ function formatToList(text: any) {
           </div>
         </el-aside>
         <el-main style="padding: 0 20px">
+          <p class="title">Code Analysis</p>
+          <el-input v-model="code_analysis" style="display: flex;" :rows="8" type="textarea"
+            placeholder="Please input" />
+          <div style="margin-top: 20px;" />
+          <el-button :icon="Search" circle @click="send_code" />
+          <div style="margin-top: 20px;" />
+          <div class="flex gap-2">
+            <el-tag v-for="tag in code_tags" :key="tag" :disable-transitions="false" :type="format_tag(tag)"
+              @click="add_message(tag)">
+              {{ tag }}
+            </el-tag>
+          </div>
+          <div style="margin-top: 20px;" />
+          <div v-if="!isEmpty(code_message_list)">
+            <el-card shadow="hover">
+              <div v-for="message in code_message_list" :key="Object.keys(message)[0]" class="flex" style="margin-top: 20px;">
+                <el-tag :type="format_tag(Object.keys(message)[0])">
+                  {{ Object.keys(message)[0] }}
+                </el-tag>
+                <div style="margin-left: 10px;">
+                  {{ Object.values(message)[0] }}
+                </div>
+              </div>
+            </el-card>
+          </div>
         </el-main>
       </el-container>
     </el-container>
@@ -130,6 +193,7 @@ function formatToList(text: any) {
 }
 
 .title {
-  height: 20px;
+  height: 40px;
+  line-height: 40px;
 }
 </style>
